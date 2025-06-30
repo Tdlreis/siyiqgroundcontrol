@@ -122,7 +122,8 @@ Item {
         id: instrumentPanel
         anchors.margins: _toolsMargin
         //anchors.topMargin: anchors.margins + SiYi.iconsHeight
-        anchors.top: multiVehiclePanelSelector.visible ? multiVehiclePanelSelector.bottom : parent.top
+        //anchors.top: multiVehiclePanelSelector.visible ? multiVehiclePanelSelector.bottom : parent.top
+        anchors.bottom: parent.bottom
         anchors.right: parent.right
         width: _rightPanelWidth
         spacing: _toolsMargin
@@ -139,7 +140,7 @@ Item {
         anchors.right: parent.right
         width: _rightPanelWidth
         state: _verticalCenter ? "verticalCenter" : "topAnchor"
-        visible: !SiYi.hideWidgets
+        visible: false//!SiYi.hideWidgets
         states: [
             State {
                 name: "verticalCenter"
@@ -164,20 +165,21 @@ Item {
 
     Rectangle {
         id: zoomMultipleRectangle
-        anchors.bottom: telemetryPanel.top
+        anchors.right: telemetryPanel.left
+        anchors.bottom: telemetryPanel.bottom
         width: zoomMultipleLabel.width + zoomMultipleLabel.width * 0.4
-        height: zoomMultipleLabel.height + zoomMultipleLabel.height * 0.4
-        color: "white"
-        anchors.bottomMargin: 10
-        visible: false
-        anchors.horizontalCenter: telemetryPanel.horizontalCenter
+        height: telemetryPanel.height
+        color:  qgcPal.toolbarBackground
+        anchors.rightMargin: 10
+        visible: true
         radius: 5
+
         QGCLabel {
             id: zoomMultipleLabel
             text: (zoomMultipleLabel.zoomMultiple / 10).toFixed(1)
             anchors.centerIn: parent
-            color: "black"
-            font.pixelSize: 48
+            color: "white"
+            font.pixelSize: 36
 
             Timer {
                 id: visibleTimer
@@ -255,9 +257,12 @@ Item {
         id: telemetryPanel
         x: recalcXPosition()
         anchors.margins: _toolsMargin
+        anchors.bottom:parent.bottom
+        anchors.right:instrumentPanel.left
         visible: !SiYi.hideWidgets
 
-        // States for custom layout support
+
+        /*// States for custom layout support
         states: [
             State {
                 name: "bottom"
@@ -302,7 +307,7 @@ Item {
                     anchors.verticalCenter: parent.verticalCenter
                 }
             }
-        ]
+        ]*/
 
         function recalcXPosition() {
             // First try centered

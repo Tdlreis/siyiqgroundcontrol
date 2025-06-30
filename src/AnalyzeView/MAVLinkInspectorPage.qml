@@ -30,9 +30,157 @@ AnalyzePage {
     property int    curCompID:          0
     property real   maxButtonWidth:     0
 
+    property real battery_tension: 0
+    property real gasoline_value: 0
+    property real generator_curr: 0
+
+    property var _RPM_FULL1
+    property var _RPM_FULL2
+    property int _RPM_R1: 10
+    property int _RPM_R2: 20
+    property int _RPM_R3: 30
+    property int _RPM_R4: 40
+    property int _RPM_R5: 50
+    property int _RPM_R6: 60
+
+    property real _RPM_MOTOR:0
+    property real _TEMP_MOTOR:0
+
     MAVLinkInspectorController {
         id: controller
     }
+
+    Timer {
+            interval: 500; running: true; repeat: true
+            onTriggered: { //IMPORTANTE: O INDICE DO CURSYSTEM.SELECTED MUDA. TEM QUE FAZER UMA FUNÇÃO PRA VASCULHAR.
+
+                //console.log("Teste novo")
+                //console.log(controller.activeSystem.messages.count)
+                for (var i = 0; i < controller.activeSystem.messages.count; i++){
+
+                    if(controller.activeSystem.messages.get(i).name === "ESC_TELEMETRY_1_TO_4"){
+                        curSystem.selected = i
+                       // console.log(controller.activeSystem.messages.get(i).fields.get(4).name, controller.activeSystem.messages.get(i).fields.get(4).value)
+                        _RPM_FULL1 = controller.activeSystem.messages.get(i).fields.get(4).value
+                         _RPM_FULL1 = String(_RPM_FULL1).split(",")
+                        _RPM_R1 = parseInt(_RPM_FULL1[0].trim())
+                        _RPM_R2 = parseInt(_RPM_FULL1[1].trim())
+                        _RPM_R3 = parseInt(_RPM_FULL1[2].trim())
+                        _RPM_R4 = parseInt(_RPM_FULL1[3].trim())
+                        //_RPM_R5 = _RPM_FULL1[4]
+                       // _RPM_R6 = _RPM_FULL1[5]
+                        /*_RPM_R1 = controller.activeSystem.messages.get(i).fields.get(4).value[0]
+                        _RPM_R2 = controller.activeSystem.messages.get(i).fields.get(4).value[1]
+                        _RPM_R3 = controller.activeSystem.messages.get(i).fields.get(4).value[2]
+                        _RPM_R4 = controller.activeSystem.messages.get(i).fields.get(4).value[3]
+                        _RPM_R5 = controller.activeSystem.messages.get(i).fields.get(4).value[4]
+                        _RPM_R6 = controller.activeSystem.messages.get(i).fields.get(4).value[5]*/
+                        //console.log("RPMs: ",_RPM_R1,_RPM_R2,_RPM_R3,_RPM_R4,_RPM_R5,_RPM_R6, "MAVINSPECTOR")
+
+                    }
+                    if(controller.activeSystem.messages.get(i).name === "ESC_TELEMETRY_5_TO_8"){
+                        curSystem.selected = i
+                       // console.log(controller.activeSystem.messages.get(i).fields.get(4).name, controller.activeSystem.messages.get(i).fields.get(4).value)
+                        _RPM_FULL2 = controller.activeSystem.messages.get(i).fields.get(4).value
+                        _RPM_FULL2 = String(_RPM_FULL2).split(",")
+                        _RPM_R5 = parseInt(_RPM_FULL2[0].trim())
+                        _RPM_R6 = parseInt(_RPM_FULL2[1].trim())
+                    }
+                    if(controller.activeSystem.messages.get(i).name === "NAMED_VALUE_FLOAT"){
+                        curSystem.selected = i
+                        //console.log(controller.activeSystem.messages.get(i).fields.get(1).name, controller.activeSystem.messages.get(i).fields.get(2).value)
+                       // console.log(controller.activeSystem.messages.get(i).fields.get(1).value)
+                        if(controller.activeSystem.messages.get(i).fields.get(1).value === "ICE_RPM"){
+                            _RPM_MOTOR = controller.activeSystem.messages.get(i).fields.get(2).value
+                        }
+                        else{
+                            _TEMP_MOTOR = controller.activeSystem.messages.get(i).fields.get(2).value
+                        }
+                    }
+                    //PEGAR VIOLAÇÕES DE ESPAÇO AEREO
+                    /*if (controller.activeSystem.messages.get(i).name === "FENCE_STATUS"){
+                    //    console.log("found");
+                    //    console.log(i)
+                        curSystem.selected = i
+                        var breach_count = controller.activeSystem.messages.get(5).fields.get(1).name
+                        var breach_count_number = controller.activeSystem.messages.get(5).fields.get(1).value
+                    //    console.log(controller.activeSystem.messages.get(5).fields.get(1).value)
+
+
+                        for (var j = 0; j < controller.activeSystem.messages.count; j++){
+                            if (controller.activeSystem.messages.get(j).name === "GLOBAL_POSITION_INT"){
+                                curSystem.selected = j
+                        //        console.log(controller.activeSystem.messages.get(j).fields.get(1).name)
+                        //        console.log(controller.activeSystem.messages.get(j).fields.get(2).name)
+                                var current_lat = controller.activeSystem.messages.get(j).fields.get(1).value
+                                var current_lon = controller.activeSystem.messages.get(j).fields.get(2).value
+                                console.log("breach_count", breach_count_number, "pos: ",current_lat, current_lon," " ) //breach status
+                            }
+                        }
+                    }
+
+                    if (controller.activeSystem.messages.get(i).name ==="POWER_STATUS"){
+                        curSystem.selected = i
+                        //battery_tension = controller.activeSystem.messages.get(i).fields.get(0).value
+
+                    }
+
+                    if (controller.activeSystem.messages.get(i).name === "BATTERY_STATUS"){
+                        curSystem.selected = i
+                        var temp_id = controller.activeSystem.messages.get(i).fields.get(0).value
+                        if (temp_id == 0){
+                            battery_tension = controller.activeSystem.messages.get(i).fields.get(4).value.slice(0, 4);
+                            //console.log("bat tension: ", battery_tension)
+                        }
+                        if (temp_id == 1){
+                            gasoline_value = controller.activeSystem.messages.get(i).fields.get(4).value.slice(0, 4);
+                            console.log("gasoline: ", gasoline_value)
+                        }
+                        if (temp_id == 2){
+                            generator_curr = controller.activeSystem.messages.get(i).fields.get(5).value.slice(0, 4);
+                            //console.log("generator curr: ", generator_curr)
+                        }
+                        console.log("ID: ", controller.activeSystem.messages.get(i).fields.get(0).value,controller.activeSystem.messages.get(i).fields.get(4).value)
+
+                    }*/
+
+                       /* console.log(controller.activeSystem.messages.get(5).fields.get(1).type);
+                        console.log(controller.activeSystem.messages.get(5).fields.get(1).value);
+                        console.log(controller.activeSystem.messages.get(5).fields.get(1).rawValue);
+                        console.log(controller.activeSystem.messages.get(5).fields.get(1).valueString);*/
+
+                }
+
+               /* curSystem.selected = 5
+                var breach_count_number1 = controller.activeSystem.messages.get(5).fields.get(1).value
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).value)
+                console.log("breach_count"," B ", breach_count_number1 ) //breach status
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).name) //breach status
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).type)
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).value)
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).rawValue)
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).valueString)
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).get(1))*/
+                /*
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).name)
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).value)
+                console.log(controller.activeSystem.messages.get(5).fields.get(1).type)
+                curSystem.selected = 1
+                console.log(controller.activeSystem.messages.get(1).fields.get(1).name)
+                console.log(controller.activeSystem.messages.get(1).fields.get(1).value)
+                console.log(controller.activeSystem.messages.get(1).fields.get(1).type)
+                curSystem.selected = 2
+                console.log(controller.activeSystem.messages.get(2).fields.get(1).name)
+                console.log(controller.activeSystem.messages.get(2).fields.get(1).value)
+                console.log(controller.activeSystem.messages.get(2).fields.get(1).type)
+                curSystem.selected = 12 //heartbeat
+                console.log("heartbeat " + controller.activeSystem.messages.get(10).count)
+    */
+                //_controller.currentGroupChanged()
+
+                //console.log(tela_parametros._controller.ParameterEditorGroup.groups)
+            }
+        }
 
     Component {
         id:  headerComponent

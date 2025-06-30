@@ -481,7 +481,7 @@ Rectangle {
                                     visible:                QGroundControl.settingsManager.appSettings.qLocaleLanguage.visible
                                 }
 
-                                QGCLabel {
+                                /*QGCLabel {
                                     text:           qsTr("Color Scheme")
                                     visible: QGroundControl.settingsManager.appSettings.indoorPalette.visible
                                 }
@@ -490,7 +490,7 @@ Rectangle {
                                     fact:                   QGroundControl.settingsManager.appSettings.indoorPalette
                                     indexModel:             false
                                     visible:                QGroundControl.settingsManager.appSettings.indoorPalette.visible
-                                }
+                                }*/
 
                                 QGCLabel {
                                     text:       qsTr("Map Provider")

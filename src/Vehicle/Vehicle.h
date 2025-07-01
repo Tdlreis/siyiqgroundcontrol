@@ -298,6 +298,7 @@ public:
     Q_PROPERTY(Fact* distanceToHome     READ distanceToHome     CONSTANT)
     Q_PROPERTY(Fact* missionItemIndex   READ missionItemIndex   CONSTANT)
     Q_PROPERTY(Fact* headingToNextWP    READ headingToNextWP    CONSTANT)
+    Q_PROPERTY(Fact* distanceToNextWP   READ distanceToNextWP   CONSTANT)
     Q_PROPERTY(Fact* headingToHome      READ headingToHome      CONSTANT)
     Q_PROPERTY(Fact* distanceToGCS      READ distanceToGCS      CONSTANT)
     Q_PROPERTY(Fact* hobbs              READ hobbs              CONSTANT)
@@ -644,6 +645,7 @@ public:
     Fact* distanceToHome                    () { return &_distanceToHomeFact; }
     Fact* missionItemIndex                  () { return &_missionItemIndexFact; }
     Fact* headingToNextWP                   () { return &_headingToNextWPFact; }
+    Fact* distanceToNextWP                  () { return &_distanceToNextWPFact; }
     Fact* headingToHome                     () { return &_headingToHomeFact; }
     Fact* distanceToGCS                     () { return &_distanceToGCSFact; }
     Fact* hobbs                             () { return &_hobbsFact; }
@@ -1303,6 +1305,7 @@ private:
     Fact _distanceToHomeFact;
     Fact _missionItemIndexFact;
     Fact _headingToNextWPFact;
+    Fact _distanceToNextWPFact;
     Fact _headingToHomeFact;
     Fact _distanceToGCSFact;
     Fact _hobbsFact;
@@ -1356,6 +1359,7 @@ private:
     static const char* _distanceToHomeFactName;
     static const char* _missionItemIndexFactName;
     static const char* _headingToNextWPFactName;
+    static const char* _distanceToNextWPFactName;
     static const char* _headingToHomeFactName;
     static const char* _distanceToGCSFactName;
     static const char* _hobbsFactName;
